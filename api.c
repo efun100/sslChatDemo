@@ -3,14 +3,13 @@ int ssl_init(SSL_CTX **ctx)
 {
 	/* SSL 库初始化 */
 	SSL_library_init();
-
 	/* 载入所有 SSL 算法 */
 	OpenSSL_add_all_algorithms();
 	/* 载入所有 SSL 错误消息 */
 	SSL_load_error_strings();
 	/* 以 SSL V2 和 V3 标准兼容方式产生一个 SSL_CTX ，即 SSL Content Text */
-	*ctx = SSL_CTX_new(SSLv23_server_method());
 	/* 也可以用 SSLv2_server_method() 或 SSLv3_server_method() 单独表示 V2 或 V3标准 */
+	*ctx = SSL_CTX_new(SSLv23_server_method());
 	if (NULL == *ctx) {
 		perror("SSL_CTX_new");
 		return -1;
@@ -60,17 +59,14 @@ int createListen(int *listen_fd, char *port, char *addr)
 	else
 		my_addr.sin_addr.s_addr = INADDR_ANY;
 
-	if (-1 ==
-	    setsockopt(*listen_fd, SOL_SOCKET, SO_REUSEADDR, &yes,
-	               sizeof(yes))) {
+	if (-1 == setsockopt(*listen_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes))) {
 		perror("setsockopt");
 		close(*listen_fd);
 		return -1;
 	}
 
-	if (bind
-	    (*listen_fd, (struct sockaddr *)&my_addr,
-	     sizeof(struct sockaddr)) < 0) {
+	if (bind(*listen_fd, (struct sockaddr *)&my_addr,
+	         sizeof(struct sockaddr)) < 0) {
 		perror("bind");
 		close(*listen_fd);
 		return -1;
@@ -93,15 +89,12 @@ int ssl_accept(SSL_CTX *ctx, int listen_fd, SSL **ssl)
 
 	/* 等待客户端连上来 */
 	bzero(&their_addr, sizeof(their_addr));
-	if ((new_fd =
-	         accept(listen_fd, (struct sockaddr *)&their_addr, &len)) < 0) {
+	if ((new_fd = accept(listen_fd, (struct sockaddr *)&their_addr, &len)) < 0) {
 		perror("accept");
 		return -1;
 	} else
-		printf
-		("\n>>>>>>> got connection from %s, port %d, socket %d <<<<<<<\n",
-		 inet_ntoa(their_addr.sin_addr), ntohs(their_addr.sin_port),
-		 new_fd);
+		printf("\ngot connection from %s, port %d, socket %d\n",
+		       inet_ntoa(their_addr.sin_addr), ntohs(their_addr.sin_port), new_fd);
 
 	/* 基于 ctx 产生一个新的 SSL */
 	*ssl = SSL_new(ctx);
@@ -120,8 +113,8 @@ int ssl_connect(SSL_CTX *ctx, int *sockfd, SSL **ssl, char *port, char *addr)
 {
 	struct sockaddr_in dest;
 
-	if (NULL == ctx || NULL == sockfd ||
-	    NULL == ssl || NULL == port || NULL == addr)
+	if (NULL == ctx || NULL == sockfd || NULL == ssl || NULL == port ||
+	    NULL == addr)
 		return -1;
 
 	/* 创建一个 socket 用于 tcp 通信 */
@@ -186,8 +179,7 @@ int disconnect(SockList *head, int fd)
 	curNode = head->next;
 	while (curNode) {
 		if (curNode->fd == fd) {
-			printf("\n>>>>>>> disconnect with the fd %d from %s\n",
-			       curNode->fd, curNode->ip);
+			printf("\ndisconnect with the fd %d from %s\n", curNode->fd, curNode->ip);
 			preNode->next = curNode->next;
 			SSL_shutdown(curNode->ssl);
 			SSL_free(curNode->ssl);

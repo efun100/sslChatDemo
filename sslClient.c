@@ -34,9 +34,8 @@ int main(int argc, char *argv[])
 	pos[strlen(pos) - 1] = '\0';
 
 	while (1) {
-
 		bzero(buf, sizeof(buf));
-		printf("[%s] Input the Msg send to Server <<<<<<< ", pos);
+		printf("[%s] Input the Msg send to Server: ", pos);
 		scanf("%s", buf);
 		len = SSL_write(ssl, buf, strlen(buf));
 		if (len <= 0) {
@@ -55,7 +54,7 @@ int main(int argc, char *argv[])
 		now = time(NULL);
 		pos = ctime(&now);
 		pos[strlen(pos) - 1] = '\0';
-		printf("\n[%s] Recv Msg from Server >>>>>>> %s\n", pos, buf);
+		printf("\n[%s] Recv Msg from Server: %s\n", pos, buf);
 	}
 
 	return 0;

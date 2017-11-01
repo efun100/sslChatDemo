@@ -78,9 +78,9 @@ int main(int argc, char *argv[])
 						now = time(NULL);
 						pos = ctime(&now);
 						pos[strlen(pos) - 1] = '\0';
-						printf("\n[%s] Recv Msg from Client %s, fd %d >>>>>>> %s\n", pos, tmpNode->ip,
+						printf("\n[%s] Recv Msg from Client %s, fd %d, %s\n", pos, tmpNode->ip,
 						       tmpNode->fd, recvBuf);
-						printf("[%s] Input the Msg you want to Response <<<<<<< ", pos);
+						printf("[%s] Input the Msg you want to Response: ", pos);
 						memset(recvBuf, 0, sizeof(recvBuf));
 						scanf("%s", recvBuf);
 						SSL_write(tmpNode->ssl, recvBuf, strlen(recvBuf));
